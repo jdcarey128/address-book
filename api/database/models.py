@@ -20,13 +20,25 @@ class User(db.Model):
                       onupdate=datetime.datetime.utcnow)
   children = relationship('Contact')
 
-  def __init__(self, email, first_name, last_name, user_id=None):
-    self.email = email 
-    self.first_name = first_name
-    self.last_name = last_name
+  def __init__(self, email, first_name, last_name):
+    if email is not None: 
+      email = email.strip()
+      if email == '':
+        email = None
     
-    if user_id is not None: 
-      self.id = user_id
+    if first_name is not None: 
+      first_name = first_name.strip()
+      if first_name == '':
+        first_name = None
+
+    if last_name is not None: 
+      last_name = last_name.strip()
+      if last_name == '':
+        last_name = None
+        
+    self.email = email
+    self.first_name = first_name 
+    self.last_name = last_name
 
   def __repr__(self):
     return '<User %r>' % self.email
