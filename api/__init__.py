@@ -1,0 +1,16 @@
+from flask import Flask 
+from flask_sqlalchemy import SQLAlchemy 
+
+# local imports 
+from config import config 
+
+db = SQLAlchemy()
+
+def create_app(config_name = 'default'): 
+  app = Flask(__name__)
+
+  @app.route('/')
+  def index(): 
+    return 'Hello Joshua'
+
+  return app 
