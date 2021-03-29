@@ -175,3 +175,47 @@ class ContactTest(unittest.TestCase):
       self.assertTrue(True)
     else: 
       self.assertTrue(False)
+
+  def test_contact_model_can_update(self):
+    contact = Contact(self.user, 
+                      {'first_name': 'emilio',
+                      'last_name': 'estevez',
+                      'group': 'business',
+                      'phone_number': '999-999-9999',
+                      'street_address': '1234 fake st',
+                      'street_address_2': 'unit 100',
+                      'city': 'denver',
+                      'state': 'colorado',
+                      'zipcode': '80019'
+                      })
+    contact.insert()
+
+    contact.first_name = 'harvey'
+    contact.last_name = 'dent'
+    contact.street_address_2 = '444 avenue way'
+    contact.update()
+
+    updated_contact = Contact.query.filter_by(id = contact.id).first()
+
+    self.assertEqual('harvey', updated_contact.first_name)
+    self.assertEqual('dent', updated_contact.last_name)
+    self.assertEqual('444 avenue way', updated_contact.street_address_2)
+
+  def test_contact_model_can_delete_record(self):
+    contact = Contact(self.user, 
+                      {'first_name': 'emilio',
+                      'last_name': 'estevez',
+                      'group': 'business',
+                      'phone_number': '999-999-9999',
+                      'street_address': '1234 fake st',
+                      'street_address_2': 'unit 100',
+                      'city': 'denver',
+                      'state': 'colorado',
+                      'zipcode': '80019'
+                      })
+    contact.insert()
+    contact.delete()
+
+    deleted_contact = Contact.query.filter_by(id = contact.id).first()
+
+    self.assertIsNone(deleted_contact)

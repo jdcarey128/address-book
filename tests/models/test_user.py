@@ -2,7 +2,7 @@ import unittest
 from sqlalchemy.exc import IntegrityError
 
 from api import create_app, db 
-from api.database.models import User 
+from api.database.models import User, Contact
 
 class UserTest(unittest.TestCase):
   def setUp(self): 
@@ -136,3 +136,59 @@ class UserTest(unittest.TestCase):
     else: 
       # should not end here
       self.assertTrue(False)
+
+  def test_user_model_can_update(self):
+    user = User (
+                email = 'joshua@example.com', 
+                first_name = 'joshua',
+                last_name = 'carey',
+                )
+    user.insert()
+
+    user.email = 'jc@example.com'
+    user.update()
+
+    updated_user = User.query.filter_by(id = user.id).first()
+
+    self.assertEqual('jc@example.com', updated_user.email)
+
+  def test_user_model_can_delete_record(self):
+    user = User(email = 'joshua@example.com', 
+                first_name = 'joshua',
+                last_name = 'carey',
+                )
+    user.insert()
+    user.delete()
+
+    deleted_user = User.query.filter_by(id=user.id).first()
+
+    self.assertIsNone(deleted_user)
+
+  def test_user_model_can_delete_record_and_its_contacts(self):
+    user = User(email = 'joshua@example.com', 
+                first_name = 'joshua',
+                last_name = 'carey',
+                )
+    user.insert()
+    self.assertEqual([], user.contacts)
+
+    contact = Contact(user, {
+              'first_name': 'emilio',
+              'last_name': 'estevez',
+              'group': 'business',
+              'phone_number': '999-999-9999',
+              'street_address': '1234 fake st',
+              'street_address_2': 'unit 100',
+              'city': 'denver',
+              'state': 'colorado',
+              'zipcode': '80019'
+              })
+    contact.insert()
+
+    self.assertEqual([contact], user.contacts)
+
+    user.delete()
+    deleted_user = User.query.filter_by(id=user.id).first()
+    self.assertIsNone(deleted_user)
+    deleted_contact = Contact.query.filter_by(id=user.id).first()
+    self.assertIsNone(deleted_contact)
