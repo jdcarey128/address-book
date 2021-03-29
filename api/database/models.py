@@ -18,7 +18,7 @@ class User(db.Model):
   updated_at = Column(DateTime, 
                       default=datetime.datetime.utcnow, 
                       onupdate=datetime.datetime.utcnow)
-  children = relationship('Contact')
+  contacts = relationship('Contact', back_populates='user', cascade='all,delete')
 
   def __init__(self, email, first_name, last_name):
     if email is not None: 
@@ -63,7 +63,6 @@ class User(db.Model):
     db.session.delete(self)
     db.session.commit()
 
-
 class Contact(db.Model): 
   '''
   Contact Model
@@ -86,6 +85,39 @@ class Contact(db.Model):
   updated_at = Column(DateTime, 
                       default=datetime.datetime.utcnow, 
                       onupdate=datetime.datetime.utcnow)
+  user = relationship('User', back_populates='contacts')
+
+  def __init__(self, user, details):
+    self.user = user
+
+    # loops through details dictionary and assigns nonemtpy and nonNone values to coresponding instance variable 
+    for key, value, in details.items():
+      if hasattr(self, key):
+        if value != '' and value is not None:
+          value = value.strip()
+          setattr(self, key, value)
+        else: 
+          setattr(self, key, None)
+
+  def insert(self): 
+    '''
+    inserts new record into db with unique email
+    '''
+    db.session.add(self)
+    db.session.commit()
+  
+  def update(self): 
+    '''
+    updates record that exists in db
+    '''
+    db.session.commit()
+
+  def delete(self): 
+    '''
+    deletes record from db
+    '''
+    db.session.delete(self)
+    db.session.commit()
 
   def __repr(self): 
     return '<Contact %r>' % self.first_name + '-' + self.last_name
