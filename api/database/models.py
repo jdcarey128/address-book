@@ -1,12 +1,10 @@
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
 from sqlalchemy.orm import relationship 
-from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.ext.declarative import declarative_base
 from api import db 
 import datetime 
 
-Base = declarative_base()
-
-class User(Base): 
+class User(db.Model): 
   '''
   User Model
   '''
@@ -54,7 +52,7 @@ class User(Base):
     db.session.commit()
 
 
-class Contact(Base): 
+class Contact(db.Model): 
   '''
   Contact Model
   '''
@@ -76,8 +74,6 @@ class Contact(Base):
   updated_at = Column(DateTime, 
                       default=datetime.datetime.utcnow, 
                       onupdate=datetime.datetime.utcnow)
-
-  def __init__(self,)
 
   def __repr(self): 
     return '<Contact %r>' % self.first_name + '-' + self.last_name
