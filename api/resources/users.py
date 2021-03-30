@@ -6,21 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from api import db 
 from api.database.models import User
-
-def _validate_field(data, field, proceed, errors, missing_okay=False):
-  if field in data: 
-    data[field] = data[field].strip()
-    if len(data[field]) == 0:
-      proceed = False 
-      errors.append(f"required '{field}' parameter is blank")
-  if not missing_okay and field not in data:
-    proceed = False 
-    errors.append(f"required '{field}' parameter is missing")
-    data[field] = ''
-  if missing_okay and field not in data: 
-    return proceed, None, errors
-
-  return proceed, data[field], errors
+from . import _validate_field, _error_400
 
 def _user_payload(user):
   return {
@@ -29,7 +15,6 @@ def _user_payload(user):
     'last_name': user.last_name,
     'email': user.email
   }
-
 
 class UsersResource(Resource): 
   '''
@@ -69,11 +54,7 @@ class UsersResource(Resource):
       user_payload['success'] = True 
       return user_payload, 201
     else: 
-      return {
-        'success': False, 
-        'error': 400,
-        'errors': errors, 
-      }, 400
+      return _error_400(errors)
 
 class UserResource(Resource):
   '''
