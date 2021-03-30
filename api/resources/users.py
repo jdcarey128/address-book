@@ -6,7 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from api import db 
 from api.database.models import User
-from . import _validate_field, _error_400
+from . import _validate_field, _error_response
 
 def _user_payload(user):
   return {
@@ -54,7 +54,7 @@ class UsersResource(Resource):
       user_payload['success'] = True 
       return user_payload, 201
     else: 
-      return _error_400(errors)
+      return _error_response(errors, 400)
 
 class UserResource(Resource):
   '''

@@ -13,9 +13,9 @@ def _validate_field(data, field, proceed, errors, missing_okay=False):
 
   return proceed, data[field], errors
 
-def _error_400(errors):
+def _error_response(errors, error_code):
   return {
         'success': False, 
-        'error': 400,
+        'error': error_code,
         'errors': errors
-  }, 400
+  }, error_code
