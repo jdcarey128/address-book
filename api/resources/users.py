@@ -32,6 +32,9 @@ def _user_payload(user):
 
 
 class UsersResource(Resource): 
+  '''
+  create user endpoint
+  '''
   def _create_user(self, data):
     proceed = True 
     errors = []
@@ -73,6 +76,11 @@ class UsersResource(Resource):
       }, 400
 
 class UserResource(Resource):
+  '''
+  /users/<user_id>
+  show [GET], update[PATCH], and delete[DELETE] user endpoints 
+  require valid user_id argument
+  '''
   def get(self, **kwargs):
     user_id = int(kwargs['user_id'].strip())
     user = None 
@@ -120,3 +128,14 @@ class UserResource(Resource):
     user_payload = _user_payload(user)
     user_payload['success'] = True 
     return user_payload, 200
+
+  def delete(self, **kwargs):
+    user_id = int(kwargs['user_id'].strip())
+    user = None
+    try: 
+      user = db.session.query(User).filter_by(id=user_id).one()
+    except NoResultFound:
+      return abort(404)
+
+    user.delete()
+    return {}, 204
