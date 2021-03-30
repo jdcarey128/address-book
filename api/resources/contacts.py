@@ -73,16 +73,13 @@ class ContactsResource(Resource):
     user_id = int(kwargs['user_id'].strip())
     user = _validate_user(user_id)
 
-    try: 
-      contacts = db.session.query(Contact).filter_by(user_id=user.id)
-    except:
-      errors = ['something went wrong when processing your request']
-      return _error_response(errors, 500)
-
+    contacts = db.session.query(Contact).filter_by(user_id=user.id)
     contact_payload = {}
     contact_list = []
+
     for contact in contacts:
       contact_list.append(_contact_payload(contact))
+      
     contact_payload['contacts'] = contact_list
     contact_payload['success'] = True
     
@@ -94,3 +91,78 @@ class ContactResource(Resource):
   endpoints for show, update, and delete contacts 
   [GET, PATCH, DELETE] /users/<user_id>/contacts/<contact_id>
   '''
+  def _update_contact(self, contact, data):
+    proceed = True 
+    errors = []
+
+    proceed, first_name, errors = _validate_field(data, 'first_name', proceed, errors, missing_okay=True)
+    proceed, last_name, errors = _validate_field(data, 'last_name', proceed, errors, missing_okay=True)
+    proceed, group, errors = _validate_field(data, 'group', proceed, errors, missing_okay=True)
+    proceed, phone_number, errors = _validate_field(data, 'phone_number', proceed, errors, missing_okay=True)
+    proceed, street_address, errors = _validate_field(data, 'street_address', proceed, errors, missing_okay=True)
+    proceed, street_address_2, errors = _validate_field(data, 'street_address_2', proceed, errors, missing_okay=True)
+    proceed, city, errors = _validate_field(data, 'city', proceed, errors, missing_okay=True)
+    proceed, state, errors = _validate_field(data, 'state', proceed, errors, missing_okay=True)
+    proceed, zipcode, errors = _validate_field(data, 'zipcode', proceed, errors, missing_okay=True)
+
+    if proceed: 
+      if first_name:
+        contact.first_name = first_name
+      if last_name:
+        contact.last_name = last_name
+      if group:
+        contact.group = group
+      if phone_number:
+        contact.phone_number = phone_number
+      if street_address:
+        contact.street_address = street_address
+      if street_address_2:
+        contact.street_address_2 = street_address_2
+      if city:
+        contact.city = city
+      if state:
+        contact.state = state
+      if zipcode:
+        contact.zipcode = zipcode
+
+      return contact, errors
+    else: 
+      return None, errors 
+
+  def get(self, **kwargs):
+    user_id = int(kwargs['user_id'].strip())
+    user = _validate_user(user_id)
+
+    contact_id = int(kwargs['contact_id'].strip())
+
+    try: 
+      contact = db.session.query(Contact).filter_by(id=contact_id).one()
+    except: 
+      errors = [f"contact with id: '{contact_id}' not found"]
+      return _error_response(errors, 400)
+
+    contact_payload = _contact_payload(contact)
+    contact_payload['success'] = True
+
+    return contact_payload, 200
+
+  def patch(self, **kwargs):
+    user_id = int(kwargs['user_id'].strip())
+    user = _validate_user(user_id)
+
+    contact_id = int(kwargs['contact_id'].strip())
+
+    try: 
+      contact = db.session.query(Contact).filter_by(id=contact_id).one()
+      contact, errors = self._update_contact(contact, json.loads(request.data))
+    except NoResultFound: 
+      errors = [f"contact with id: '{contact_id}' not found"]
+      return _error_response(errors, 400)
+
+    if contact is not None: 
+      contact_payload = _contact_payload(contact)
+      contact_payload['success'] = True 
+
+      return contact_payload, 200
+    else: 
+      return _error_response(errors, 400)
