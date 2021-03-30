@@ -1,12 +1,12 @@
 import json 
 from flask import request 
-from flask_restful import Resource, abort 
+from flask_restful import Resource, abort
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 from api import db 
 from api.database.models import User, Contact 
-from . import _validate_field, _error_400
+from . import _validate_field, _error_response
 
 def _validate_user(user_id):
   try: 
@@ -71,7 +71,26 @@ class ContactsResource(Resource):
       contact_payload['success'] = True 
       return contact_payload, 201
     else: 
-      return _error_400(errors)
+      return _error_response(errors, 400)
+
+  def get(self, **kwargs):
+    user_id = int(kwargs['user_id'].strip())
+    user = _validate_user(user_id)
+
+    try: 
+      contacts = db.session.query(Contact).filter_by(user_id=user.id)
+    except:
+      errors = ['something went wrong when processing your request']
+      return _error_response(errors, 500)
+
+    contact_payload = {}
+    contact_list = []
+    for contact in contacts:
+      contact_list.append(_contact_payload(contact))
+    contact_payload['contacts'] = contact_list
+    contact_payload['success'] = True
+    
+    return contact_payload, 200
 
 class ContactResource(Resource):
   '''
