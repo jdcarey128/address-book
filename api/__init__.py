@@ -24,8 +24,9 @@ def create_app(config_name = 'default'):
 
   api = Api(app)
   
-  from api.resources.users import UsersResource
+  from api.resources.users import UsersResource, UserResource
 
+  api.add_resource(UserResource, '/users/<user_id>')
   api.add_resource(UsersResource, '/users')
 
   return app 

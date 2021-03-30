@@ -17,6 +17,8 @@ def _validate_field(data, field, proceed, errors, missing_okay=False):
     proceed = False 
     errors.append(f"required '{field}' parameter is missing")
     data[field] = ''
+  if missing_okay and field not in data: 
+    return proceed, None, errors
 
   return proceed, data[field], errors
 
@@ -81,4 +83,40 @@ class UserResource(Resource):
     
     user_payload = _user_payload(user)
     user_payload['success'] = True
+    return user_payload, 200
+
+  def patch(self, **kwargs):
+    user_id = int(kwargs['user_id'].strip())
+    user = None 
+    try: 
+      user = db.session.query(User).filter_by(id=user_id).one()
+    except NoResultFound:
+      return abort(404)
+
+    proceed = True 
+    errors = []
+    data = json.loads(request.data)
+
+    proceed, first_name, errors = _validate_field(data, 'first_name', proceed, errors, missing_okay=True)
+    proceed, last_name, errors = _validate_field(data, 'last_name', proceed, errors, missing_okay=True)
+    proceed, email, errors = _validate_field(data, 'email', proceed, errors, missing_okay=True)
+    
+    if not proceed: 
+      return {
+        'success': False, 
+        'error': 400,
+        'errors': errors
+      }, 400
+    
+    if first_name and len(first_name.strip()) > 0:
+      user.first_name = first_name
+    if last_name and len(last_name.strip()) > 0: 
+      user.last_name = last_name
+    if email and len(email.strip()) > 0: 
+      user.email = email 
+
+    user.update()
+
+    user_payload = _user_payload(user)
+    user_payload['success'] = True 
     return user_payload, 200
