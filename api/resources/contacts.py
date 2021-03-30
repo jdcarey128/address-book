@@ -166,3 +166,18 @@ class ContactResource(Resource):
       return contact_payload, 200
     else: 
       return _error_response(errors, 400)
+
+  def delete(self, **kwargs):
+    user_id = int(kwargs['user_id'].strip())
+    user = _validate_user(user_id)
+
+    contact_id = int(kwargs['contact_id'].strip())
+
+    try: 
+      contact = db.session.query(Contact).filter_by(id=contact_id).one()
+      contact.delete()
+    except NoResultFound: 
+      errors = [f"contact with id: '{contact_id}' not found"]
+      return _error_response(errors, 400)
+
+    return {}, 204
