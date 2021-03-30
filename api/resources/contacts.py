@@ -49,12 +49,8 @@ class ContactsResource(Resource):
     proceed, zipcode, errors = _validate_field(data, 'zipcode', proceed, errors)
 
     if proceed: 
-      try: 
-        contact = Contact(user, data)
-        contact.insert()
-      except:
-        contact = None 
-        import ipdb; ipdb.set_trace(context=5)
+      contact = Contact(user, data)
+      contact.insert()
         
       return contact, errors
     else: 

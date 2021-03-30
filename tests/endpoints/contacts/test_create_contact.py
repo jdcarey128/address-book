@@ -106,3 +106,10 @@ class CreateContactTest(unittest.TestCase):
     assert_payload_field_type_value(self, data, 'success', bool, False)
     assert_payload_field_type_value(self, data, 'error', int, 400)
     assert_payload_field_type_value(self, data, 'errors', list, ["required 'last_name' parameter is blank"])
+
+  def test_sadpath_invalid_user_id(self):
+    payload = deepcopy(self.payload)
+    response = self.client.post(f'/users/99999/contacts', 
+    json=payload, content_type='application/json')
+    
+    self.assertEqual(404, response.status_code)
