@@ -1,7 +1,8 @@
 import json 
 from flask import request
-from flask_restful import Resource
+from flask_restful import Resource, abort
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
 from api import db 
 from api.database.models import User
@@ -18,6 +19,14 @@ def _validate_field(data, field, proceed, errors, missing_okay=False):
     data[field] = ''
 
   return proceed, data[field], errors
+
+def _user_payload(user):
+  return {
+    'id': user.id,
+    'first_name': user.first_name,
+    'last_name': user.last_name,
+    'email': user.email
+  }
 
 
 class UsersResource(Resource): 
@@ -51,16 +60,25 @@ class UsersResource(Resource):
   def post(self):
     user, errors = self._create_user(json.loads(request.data))
     if user is not None: 
-      return {
-        'success': True,
-        'id': user.id,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'email': user.email
-      }, 201
+      user_payload = _user_payload(user)
+      user_payload['success'] = True 
+      return user_payload, 201
     else: 
       return {
         'success': False, 
         'error': 400,
         'errors': errors, 
       }, 400
+
+class UserResource(Resource):
+  def get(self, **kwargs):
+    user_id = int(kwargs['user_id'].strip())
+    user = None 
+    try: 
+      user = db.session.query(User).filter_by(id=user_id).one()
+    except NoResultFound:
+      return abort(404)
+    
+    user_payload = _user_payload(user)
+    user_payload['success'] = True
+    return user_payload, 200
