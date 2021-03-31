@@ -2,15 +2,22 @@
 
 
 ### Installation 
+```zsh
+# create a virtual environment 
+python3 -m venv venv
 
-1. Create a virtual environment: `python3 -m venv venv`
-1. Activate virtual environment: `source venv/bin/activate`
-1. Install dependencies: `pip install requirements.txt`
-1. Export app configuration: `export FLASK_CONFIG=develpment`
+# activate virtual environment 
+source venv/bin/activate
 
+# install dependencies 
+pip install requirements.txt
+
+# Export app configuration
+export FLASK_CONFIG=develpment
+```
 
 ### Database Setup 
-
+If needed, download PostgreSQL from [here](https://www.postgresql.org/download/).
 ```zsh
 # create postgres dev and test databases
 # make sure postgres server is running 
@@ -28,3 +35,5 @@ export FLASK_CONFIG=testing
 flask db migrate 
 flask db upgrade
 ```
+### Testing 
+From terminal, run `pytest`. You should see 62 passing tests (endpoints and models). 
