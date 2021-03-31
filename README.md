@@ -37,3 +37,6 @@ flask db upgrade
 ```
 ### Testing 
 From terminal, run `pytest`. You should see 62 passing tests (endpoints and models). 
+
+### Running API 
+From the root directory, run `python3 run.py`
