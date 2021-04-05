@@ -18,6 +18,7 @@ def _validate_user(user_id):
 
 def _contact_payload(contact):
   return {
+    'id': contact.id,
     'first_name': contact.first_name,
     'last_name': contact.last_name,
     'group': contact.group,
@@ -125,6 +126,7 @@ class ContactResource(Resource):
       if zipcode:
         contact.zipcode = zipcode
 
+      contact.update()
       return contact, errors
     else: 
       return None, errors 

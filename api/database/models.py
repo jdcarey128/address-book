@@ -101,7 +101,7 @@ class Contact(db.Model):
 
   def insert(self): 
     '''
-    inserts new record into db with unique email
+    inserts new record into db
     '''
     db.session.add(self)
     db.session.commit()
