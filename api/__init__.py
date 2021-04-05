@@ -33,16 +33,18 @@ def create_app(config_name = 'default'):
     CORS setup 
     '''
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-    response.headers.add('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE, OPTIONS')
 
     return response 
   
   from api.resources.users import UsersResource, UserResource
   from api.resources.contacts import ContactsResource, ContactResource
+  from api.resources.login import LoginResource
 
   api.add_resource(UserResource, '/users/<user_id>')
   api.add_resource(UsersResource, '/users')
   api.add_resource(ContactsResource, '/users/<user_id>/contacts')
   api.add_resource(ContactResource, '/users/<user_id>/contacts/<contact_id>')
+  api.add_resource(LoginResource, '/login')
 
   return app 
