@@ -3,6 +3,15 @@
 ### Front End 
 The front end for this app can be found [here](https://github.com/jdcarey128/address-book-front-end)
 
+### App in Production 
+Checkout the app hosted on Heroku [here](https://address-book-frontend-lt.herokuapp.com/login)
+
+Explore the app's functionality using the following credentials, or register your own account:  
+```
+email: test@example.com
+password: test1234
+```
+
 ### Installation 
 ```zsh
 # create a virtual environment 
@@ -81,3 +90,6 @@ python run.py
 
 ### Future Additions
 1. Allow contacts to have multiple addresses
+
+### Author
+**Joshua Carey** - *Turing Graduate* - [GitHub Profile](https://github.com/jdcarey128) - [Turing Alum Portfolio](https://alumni.turing.io/alumni/joshua-carey) - [LinkedIn](https://www.linkedin.com/in/carey-joshua/)
