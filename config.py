@@ -14,9 +14,15 @@ class TestingConfig(Config):
   TESTING = True 
   SQLALCHEMY_DATABASE_URI = 'postgresql://localhost:5432/address_book_test'
 
+class ProductionConfig(Config):
+  DEBUG = False 
+  TESTING = False
+  SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+
 config = {
   'development': DevelopmentConfig,
   'testing': TestingConfig,
+  'production': ProductionConfig,
 
   'default': DevelopmentConfig
 }
