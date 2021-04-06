@@ -20,10 +20,6 @@ def create_app(config_name = 'default'):
   migrate = Migrate(app, db)
 
   CORS(app, resources={r"/*": {"origins": "*"}})
-  
-  @app.route('/')
-  def index(): 
-    return 'Hello Joshua'
 
   api = Api(app)
 
