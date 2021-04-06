@@ -61,7 +61,18 @@ open htmlcov/index.html
 ```
 
 ### Running API 
-From the root directory, run `python3 run.py`. Make sure the API is running along with front end server to interact with the app. 
+```zsh
+# Confirm that you are using development configuration 
+env 
+
+# If not, switch to development configuration
+export FLASK_CONFIG=development
+
+# Run local server 
+python run.py
+
+# Make sure the API is running along with front end server to interact with the app. 
+```
 
 ### Project Highlights 
 1. First time connecting Flask API to database 
