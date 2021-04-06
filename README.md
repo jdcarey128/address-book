@@ -15,16 +15,17 @@ password: test1234
 ### Installation 
 ```zsh
 # create a virtual environment 
-python3 -m venv venv
+python3 -m venv ./venv
 
 # activate virtual environment 
 source venv/bin/activate
 
 # install dependencies 
-pip install requirements.txt
+pip3 install -r requirements.txt
 
 # Export app configuration
-export FLASK_CONFIG=develpment
+export FLASK_APP=run.py
+export FLASK_CONFIG=development
 ```
 
 ### Database Setup 
@@ -35,8 +36,6 @@ If needed, download PostgreSQL from [here](https://www.postgresql.org/download/)
 createdb address_book_development
 createdb address_book_test
 
-export FLASK_APP=run.py
-
 # run migrations for development 
 flask db migrate 
 flask db upgrade
@@ -46,6 +45,25 @@ export FLASK_CONFIG=testing
 flask db migrate 
 flask db upgrade
 ```
+### Troubleshooting migrations (Just in case you're like me)
+```zsh
+# If you get the following error when running the above migrations:
+Try 'flask --help' for help.
+
+Error: No such command 'db'.
+
+# And 'flask --help' gives you the following: 
+ModuleNotFoundError: No module named 'flask_migrate'
+
+# Try uninstalling the global flask installation 
+deactivate 
+pip uninstall flask 
+source venv/bin/activate 
+flask db migrate 
+
+# and hopefully that works!
+```
+
 ### Testing 
 From terminal, run `pytest`. You should see 66 passing tests (endpoints and models). 
 
@@ -78,7 +96,7 @@ env
 export FLASK_CONFIG=development
 
 # Run local server 
-python run.py
+python3 run.py
 
 # Make sure the API is running along with front end server to interact with the app. 
 ```
